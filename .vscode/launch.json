@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "MediConnect (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/principal.dart"
+    },
+    {
+      "name": "MediConnect (profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/principal.dart"
+    },
+    {
+      "name": "MediConnect (release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/principal.dart"
+    }
+  ]
+}
