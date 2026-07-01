@@ -43,6 +43,9 @@ dependencies:
   shared_preferences: ^2.5.3  # session et stockage local léger
   go_router: ^17.0.0          # navigation entre écrans
   google_fonts: ^6.3.2        # typographie (Étape 1)
+  pdf: ^3.11.3
+  printing: ^5.14.3
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

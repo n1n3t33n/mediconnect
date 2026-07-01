@@ -9,6 +9,7 @@ import '../../fournisseurs/fournisseur_authentification.dart';
 import '../../fournisseurs/fournisseur_auto_diagnostic.dart';
 import '../../modeles/modele_utilisateur.dart';
 import '../auto_diagnostic/ecran_auto_diagnostic.dart';
+import '../ordonnance/ecran_liste_ordonnances.dart';
 import '../recherche_medecin/ecran_recherche_medecin.dart';
 import '../teleconsultation/ecran_historique_consultations.dart';
 
@@ -107,23 +108,22 @@ class EcranAccueilConnecte extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: DimensionsApplication.espacementGrand),
-                  CarteApplication(
-                    enfant: Row(
-                      children: const [
-                        Icon(Icons.construction_outlined,
-                            color: CouleursApplication.accent),
-                        SizedBox(width: DimensionsApplication.espacementPetit),
-                        Expanded(
-                          child: Text(
-                            'D\'autres fonctionnalités (recherche de médecin, '
-                            'téléconsultation…) arrivent dans les prochaines '
-                            'étapes.',
-                          ),
+                  if (!utilisateur.estAdministrateur) ...[
+                    const SizedBox(height: DimensionsApplication.espacementMoyen),
+                    _carteAction(
+                      context,
+                      titre: 'Mes ordonnances',
+                      description:
+                          'Ordonnances numériques reçues et leur PDF.',
+                      icone: Icons.receipt_long_outlined,
+                      couleur: CouleursApplication.accent,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const EcranListeOrdonnances(),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: DimensionsApplication.espacementGrand),
                   BoutonSecondaire(
                     libelle: 'Se déconnecter',

@@ -1,21 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../composants/bouton_principal.dart';
 import '../../composants/bouton_secondaire.dart';
 import '../../composants/carte_application.dart';
 import '../../config/couleurs_application.dart';
 import '../../config/dimensions_application.dart';
+import '../../fournisseurs/fournisseur_authentification.dart';
 import '../../modeles/modele_consultation.dart';
+import '../../modeles/modele_ordonnance.dart';
+import '../../services/service_ordonnance.dart';
 import '../../utilitaires/formatage_date.dart';
+import '../ordonnance/ecran_ordonnance.dart';
+import '../ordonnance/ecran_redaction_ordonnance.dart';
 
 /// Détail d'une consultation : participants, synthèse du médecin, pré-diagnostic
-/// et (à venir) ordonnance.
-class EcranDetailConsultation extends StatelessWidget {
+/// et ordonnance (rédaction côté médecin, réception côté patient).
+class EcranDetailConsultation extends StatefulWidget {
   const EcranDetailConsultation({super.key, required this.consultation});
 
   final Consultation consultation;
 
   @override
+  State<EcranDetailConsultation> createState() =>
+      _EcranDetailConsultationState();
+}
+
+class _EcranDetailConsultationState extends State<EcranDetailConsultation> {
+  final _serviceOrdonnance = ServiceOrdonnance();
+  late Future<Ordonnance?> _futurOrdonnance;
+
+  @override
+  void initState() {
+    super.initState();
+    _recharger();
+  }
+
+  void _recharger() {
+    setState(() {
+      _futurOrdonnance = _serviceOrdonnance
+          .ordonnancePourConsultation(widget.consultation.id);
+    });
+  }
+
+  Future<void> _redigerOrdonnance() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            EcranRedactionOrdonnance(consultation: widget.consultation),
+      ),
+    );
+    if (mounted) _recharger();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final consultation = widget.consultation;
     final dureeMin = (consultation.dureeSecondes / 60).ceil();
 
     return Scaffold(
@@ -71,14 +111,7 @@ class EcranDetailConsultation extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: DimensionsApplication.espacementMoyen),
-                  _bloc(
-                    context,
-                    titre: 'Ordonnance',
-                    icone: Icons.receipt_long_outlined,
-                    contenu:
-                        'La génération et la réception d\'ordonnance arrivent à '
-                        'l\'étape suivante.',
-                  ),
+                  _sectionOrdonnance(context),
                   const SizedBox(height: DimensionsApplication.espacementGrand),
                   BoutonSecondaire(
                     libelle: 'Retour à l\'accueil',
@@ -92,6 +125,82 @@ class EcranDetailConsultation extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _sectionOrdonnance(BuildContext context) {
+    final estMedecin = context
+            .read<FournisseurAuthentification>()
+            .utilisateurCourant
+            ?.estMedecin ??
+        false;
+
+    return FutureBuilder<Ordonnance?>(
+      future: _futurOrdonnance,
+      builder: (context, snapshot) {
+        final enChargement =
+            snapshot.connectionState != ConnectionState.done;
+        final ordonnance = snapshot.data;
+
+        return CarteApplication(
+          enfant: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.receipt_long_outlined,
+                      size: 20, color: CouleursApplication.primaire),
+                  const SizedBox(width: DimensionsApplication.espacementPetit),
+                  Text(
+                    'Ordonnance',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              const SizedBox(height: DimensionsApplication.espacementPetit),
+              if (enChargement)
+                const Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: DimensionsApplication.espacementPetit),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (ordonnance != null) ...[
+                Text(
+                  '${ordonnance.medicaments.length} médicament'
+                  '${ordonnance.medicaments.length > 1 ? 's' : ''} · '
+                  'émise le ${FormatageDate.dateHeure(ordonnance.date)}',
+                ),
+                const SizedBox(height: DimensionsApplication.espacementMoyen),
+                BoutonPrincipal(
+                  libelle: 'Voir l\'ordonnance',
+                  icone: Icons.visibility_outlined,
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          EcranOrdonnance(ordonnance: ordonnance),
+                    ),
+                  ),
+                ),
+              ] else if (estMedecin) ...[
+                const Text('Aucune ordonnance émise pour cette consultation.'),
+                const SizedBox(height: DimensionsApplication.espacementMoyen),
+                BoutonPrincipal(
+                  libelle: 'Rédiger une ordonnance',
+                  icone: Icons.edit_outlined,
+                  onPressed: _redigerOrdonnance,
+                ),
+              ] else
+                const Text(
+                  'Aucune ordonnance n\'a encore été émise pour cette '
+                  'consultation.',
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
