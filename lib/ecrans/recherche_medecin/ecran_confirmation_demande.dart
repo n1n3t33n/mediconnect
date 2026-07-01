@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../composants/bouton_principal.dart';
+import '../../composants/bouton_secondaire.dart';
 import '../../composants/carte_application.dart';
 import '../../config/couleurs_application.dart';
 import '../../config/dimensions_application.dart';
+import '../../modeles/modele_consultation.dart';
 import '../../modeles/modele_demande_consultation.dart';
 import '../../utilitaires/formatage_date.dart';
+import '../teleconsultation/ecran_teleconsultation.dart';
 
 /// Confirmation après création d'une demande de consultation.
 class EcranConfirmationDemande extends StatelessWidget {
@@ -35,6 +38,24 @@ class EcranConfirmationDemande extends StatelessWidget {
     }
     return 'Votre demande a été envoyée à ${demande.medecinNom}. Le médecin va '
         'vous prendre en charge.';
+  }
+
+  void _rejoindreTeleconsultation(BuildContext context) {
+    final consultation = Consultation(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      patientId: demande.patientId,
+      patientNom: demande.patientNom,
+      medecinId: demande.medecinId,
+      medecinNom: demande.medecinNom,
+      specialite: demande.specialite,
+      statut: StatutConsultation.enCours,
+      resumeAutoDiagnostic: demande.resumeAutoDiagnostic,
+    );
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => EcranTeleconsultation(consultation: consultation),
+      ),
+    );
   }
 
   @override
@@ -115,8 +136,13 @@ class EcranConfirmationDemande extends StatelessWidget {
                   ),
                   const SizedBox(height: DimensionsApplication.espacementGrand),
                   BoutonPrincipal(
+                    libelle: 'Rejoindre la téléconsultation',
+                    icone: Icons.videocam,
+                    onPressed: () => _rejoindreTeleconsultation(context),
+                  ),
+                  const SizedBox(height: DimensionsApplication.espacementPetit),
+                  BoutonSecondaire(
                     libelle: 'Terminer',
-                    icone: Icons.check,
                     onPressed: () => Navigator.of(context)
                         .popUntil((route) => route.isFirst),
                   ),

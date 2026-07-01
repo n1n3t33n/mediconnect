@@ -10,6 +10,7 @@ import '../../fournisseurs/fournisseur_auto_diagnostic.dart';
 import '../../modeles/modele_utilisateur.dart';
 import '../auto_diagnostic/ecran_auto_diagnostic.dart';
 import '../recherche_medecin/ecran_recherche_medecin.dart';
+import '../teleconsultation/ecran_historique_consultations.dart';
 
 /// Écran d'accueil affiché après connexion.
 ///
@@ -94,6 +95,19 @@ class EcranAccueilConnecte extends StatelessWidget {
                     ),
                     const SizedBox(height: DimensionsApplication.espacementMoyen),
                   ],
+                  _carteAction(
+                    context,
+                    titre: 'Mes consultations',
+                    description: 'Historique et synthèses de vos consultations.',
+                    icone: Icons.history,
+                    couleur: CouleursApplication.primaireFonce,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const EcranHistoriqueConsultations(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: DimensionsApplication.espacementGrand),
                   CarteApplication(
                     enfant: Row(
                       children: const [
