@@ -9,6 +9,7 @@ import '../../fournisseurs/fournisseur_authentification.dart';
 import '../../fournisseurs/fournisseur_auto_diagnostic.dart';
 import '../../modeles/modele_utilisateur.dart';
 import '../auto_diagnostic/ecran_auto_diagnostic.dart';
+import '../recherche_medecin/ecran_recherche_medecin.dart';
 
 /// Écran d'accueil affiché après connexion.
 ///
@@ -76,6 +77,20 @@ class EcranAccueilConnecte extends StatelessWidget {
                       icone: Icons.fact_check_outlined,
                       couleur: CouleursApplication.primaire,
                       onTap: () => _ouvrirAutoDiagnostic(context),
+                    ),
+                    const SizedBox(height: DimensionsApplication.espacementMoyen),
+                    _carteAction(
+                      context,
+                      titre: 'Rechercher un médecin',
+                      description:
+                          'Filtrez par spécialité, établissement ou disponibilité.',
+                      icone: Icons.search,
+                      couleur: CouleursApplication.succes,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const EcranRechercheMedecin(),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: DimensionsApplication.espacementMoyen),
                   ],

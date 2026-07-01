@@ -9,6 +9,7 @@ import '../../config/couleurs_application.dart';
 import '../../config/dimensions_application.dart';
 import '../../fournisseurs/fournisseur_auto_diagnostic.dart';
 import '../../modeles/modele_auto_diagnostic.dart';
+import '../recherche_medecin/ecran_recherche_medecin.dart';
 
 /// Résultat de l'auto-diagnostic : orientation indicative, alerte de criticité,
 /// recommandations, contact d'urgence si nécessaire et avertissement.
@@ -51,10 +52,10 @@ class VueResultatAutoDiagnostic extends StatelessWidget {
               BoutonPrincipal(
                 libelle: 'Consulter un médecin',
                 icone: Icons.video_call_outlined,
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Recherche de médecin disponible à l\'étape suivante.',
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => EcranRechercheMedecin(
+                      resumeAutoDiagnostic: _resumePourMedecin(resultat),
                     ),
                   ),
                 ),
@@ -75,6 +76,14 @@ class VueResultatAutoDiagnostic extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _resumePourMedecin(ResultatAutoDiagnostic resultat) {
+    final symptomes = resultat.symptomesSignales.isEmpty
+        ? 'aucun symptôme précis'
+        : resultat.symptomesSignales.join(', ');
+    return 'Auto-diagnostic — orientation : ${resultat.niveau.titre}. '
+        'Symptômes signalés : $symptomes.';
   }
 
   Widget _banniereOrientation(
