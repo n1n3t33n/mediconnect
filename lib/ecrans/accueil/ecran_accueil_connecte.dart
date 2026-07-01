@@ -6,7 +6,9 @@ import '../../composants/carte_application.dart';
 import '../../config/couleurs_application.dart';
 import '../../config/dimensions_application.dart';
 import '../../fournisseurs/fournisseur_authentification.dart';
+import '../../fournisseurs/fournisseur_auto_diagnostic.dart';
 import '../../modeles/modele_utilisateur.dart';
+import '../auto_diagnostic/ecran_auto_diagnostic.dart';
 
 /// Écran d'accueil affiché après connexion.
 ///
@@ -65,6 +67,18 @@ class EcranAccueilConnecte extends StatelessWidget {
                   const SizedBox(height: DimensionsApplication.espacementGrand),
                   _carteProfil(context, utilisateur),
                   const SizedBox(height: DimensionsApplication.espacementGrand),
+                  if (utilisateur.estPatient) ...[
+                    _carteAction(
+                      context,
+                      titre: 'Faire un auto-diagnostic',
+                      description:
+                          'Évaluez vos symptômes et obtenez une orientation.',
+                      icone: Icons.fact_check_outlined,
+                      couleur: CouleursApplication.primaire,
+                      onTap: () => _ouvrirAutoDiagnostic(context),
+                    ),
+                    const SizedBox(height: DimensionsApplication.espacementMoyen),
+                  ],
                   CarteApplication(
                     enfant: Row(
                       children: const [
@@ -73,9 +87,9 @@ class EcranAccueilConnecte extends StatelessWidget {
                         SizedBox(width: DimensionsApplication.espacementPetit),
                         Expanded(
                           child: Text(
-                            'Les fonctionnalités (auto-diagnostic, recherche de '
-                            'médecin, téléconsultation…) arrivent dans les '
-                            'prochaines étapes.',
+                            'D\'autres fonctionnalités (recherche de médecin, '
+                            'téléconsultation…) arrivent dans les prochaines '
+                            'étapes.',
                           ),
                         ),
                       ],
@@ -93,6 +107,67 @@ class EcranAccueilConnecte extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _ouvrirAutoDiagnostic(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => FournisseurAutoDiagnostic(),
+          child: const EcranAutoDiagnostic(),
+        ),
+      ),
+    );
+  }
+
+  Widget _carteAction(
+    BuildContext context, {
+    required String titre,
+    required String description,
+    required IconData icone,
+    required Color couleur,
+    required VoidCallback onTap,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    return CarteApplication(
+      onTap: onTap,
+      enfant: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: couleur.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icone, color: couleur),
+          ),
+          const SizedBox(width: DimensionsApplication.espacementMoyen),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titre,
+                  style: textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                    height: DimensionsApplication.espacementTresPetit),
+                Text(
+                  description,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: CouleursApplication.texteSecondaire,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right,
+              color: CouleursApplication.texteTertiaire),
+        ],
       ),
     );
   }
