@@ -43,3 +43,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# --- Notes de travail locales (ne pas versionner) ---
+idées_améliorations.txt
+instructions_claude_code.md
+
+# --- Fichiers système (Windows / macOS) ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.AppleDouble
+.LSOverride
+
+# --- Secrets & variables d'environnement locales ---
+# (les clés de signature Android sont déjà ignorées via android/.gitignore)
+.env
+.env.*
+*.pem
+secrets.dart
+lib/**/secrets*.dart

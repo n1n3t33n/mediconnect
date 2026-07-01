@@ -84,3 +84,9 @@ sur `lib/principal.dart` : la touche F5 fonctionne directement.
 | 9 | Espace médecin & back-office admin |
 | 10 | Suivi chronique, renouvellement & dossier familial |
 | 11 | Finitions & exigences non fonctionnelles |
+
+## Crédits
+
+- Animations Rive (`assets/animations/shapes.riv`, `button.riv`) issues du template
+  public **« Build an Animated App with Rive and Flutter »** d'Abu Anwar, adaptées
+  pour l'onboarding MediConnect.
