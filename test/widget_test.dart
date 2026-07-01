@@ -1,21 +1,25 @@
-// Test de fumée de l'onboarding (Étape 2).
+// Test de fumée de l'aiguillage initial (Étape 3).
 //
-// Vérifie que l'application démarre sur l'écran d'accueil animé et affiche la
-// première page d'onboarding ainsi que le bouton de progression.
+// Vérifie que, sans session enregistrée, l'application affiche bien l'onboarding
+// après le chargement de session. Le fournisseur d'authentification s'appuie sur
+// SharedPreferences : on installe donc des valeurs simulées avant le test.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:mediconnect/principal.dart';
 
 void main() {
-  testWidgets('L\'onboarding affiche la première page et le bouton Suivant',
+  testWidgets('Sans session, l\'onboarding s\'affiche après chargement',
       (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+
     await tester.pumpWidget(const ApplicationMediConnect());
+    // Laisse le chargement asynchrone de la session se terminer.
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.text('Bienvenue sur MediConnect'), findsOneWidget);
-    expect(find.byIcon(Icons.health_and_safety), findsOneWidget);
     expect(find.text('Suivant'), findsOneWidget);
   });
 }

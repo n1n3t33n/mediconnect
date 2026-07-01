@@ -5,12 +5,13 @@ import '../../composants/bouton_principal.dart';
 import '../../composants/indicateur_pages.dart';
 import '../../config/couleurs_application.dart';
 import '../../config/dimensions_application.dart';
+import '../authentification/ecran_connexion.dart';
 import 'contenu_onboarding.dart';
 
 /// Écran d'accueil animé (onboarding) de MediConnect.
 ///
 /// Présente les fonctionnalités clés sur plusieurs pages défilantes, sur fond
-/// d'animation Rive. Le bouton final mènera à l'authentification (Étape 3).
+/// d'animation Rive. Le bouton final mène à l'écran de connexion.
 class EcranOnboarding extends StatefulWidget {
   const EcranOnboarding({super.key});
 
@@ -50,11 +51,8 @@ class _EcranOnboardingState extends State<EcranOnboarding> {
   }
 
   void _terminerOnboarding() {
-    // L'écran d'authentification sera branché ici à l'Étape 3.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Authentification disponible à l\'étape suivante.'),
-      ),
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const EcranConnexion()),
     );
   }
 

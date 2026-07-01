@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'config/constantes_application.dart';
 import 'config/theme_application.dart';
-import 'ecrans/accueil/ecran_onboarding.dart';
+import 'ecrans/accueil/portail_authentification.dart';
+import 'fournisseurs/fournisseur_authentification.dart';
 
 /// Point d'entrée de l'application MediConnect.
 ///
-/// Étape 2 — Onboarding animé : l'application démarre sur l'écran d'accueil
-/// animé (Rive). L'authentification sera branchée à l'Étape 3.
+/// Étape 3 — Authentification : le fournisseur d'authentification est branché
+/// à la racine, et l'aiguillage (onboarding / accueil connecté) est géré par
+/// [PortailAuthentification].
 void main() {
   runApp(const ApplicationMediConnect());
 }
@@ -18,11 +21,14 @@ class ApplicationMediConnect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: ConstantesApplication.nomApplication,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeApplication.clair,
-      home: const EcranOnboarding(),
+    return ChangeNotifierProvider(
+      create: (_) => FournisseurAuthentification(),
+      child: MaterialApp(
+        title: ConstantesApplication.nomApplication,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeApplication.clair,
+        home: const PortailAuthentification(),
+      ),
     );
   }
 }
